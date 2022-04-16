@@ -7,17 +7,6 @@ Create default value for ingress port
 {{- end }}
 
 {{/*
-Create default value for ingress path
-*/}}
-{{- define "confluence.ingressPath" -}}
-{{- if .Values.ingress.path -}}
-{{- .Values.ingress.path -}}
-{{- else -}}
-{{ default ( "/" ) .Values.confluence.service.contextPath -}}
-{{- end }}
-{{- end }}
-
-{{/*
 The name the synchrony app within the chart.
 TODO: This will break if the common.names.name exceeds 63 characters, need to find a more rebust way to do this
 */}}
