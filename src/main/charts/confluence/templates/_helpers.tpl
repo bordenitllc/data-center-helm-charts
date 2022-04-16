@@ -2,18 +2,18 @@
 {{/*
 Create default value for ingress port
 */}}
-{{- define "jira.ingressPort" -}}
+{{- define "confluence.ingressPort" -}}
 {{ default (ternary "443" "80" .Values.ingress.https) .Values.ingress.port -}}
 {{- end }}
 
 {{/*
 Create default value for ingress path
 */}}
-{{- define "jira.ingressPath" -}}
+{{- define "confluence.ingressPath" -}}
 {{- if .Values.ingress.path -}}
 {{- .Values.ingress.path -}}
 {{- else -}}
-{{ default ( "/" ) .Values.jira.service.contextPath -}}
+{{ default ( "/" ) .Values.confluence.service.contextPath -}}
 {{- end }}
 {{- end }}
 
