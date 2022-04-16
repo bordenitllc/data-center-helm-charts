@@ -1,5 +1,23 @@
 {{/* vim: set filetype=mustache: */}}
 {{/*
+Create default value for ingress port
+*/}}
+{{- define "jira.ingressPort" -}}
+{{ default (ternary "443" "80" .Values.ingress.https) .Values.ingress.port -}}
+{{- end }}
+
+{{/*
+Create default value for ingress path
+*/}}
+{{- define "jira.ingressPath" -}}
+{{- if .Values.ingress.path -}}
+{{- .Values.ingress.path -}}
+{{- else -}}
+{{ default ( "/" ) .Values.jira.service.contextPath -}}
+{{- end }}
+{{- end }}
+
+{{/*
 The name the synchrony app within the chart.
 TODO: This will break if the common.names.name exceeds 63 characters, need to find a more rebust way to do this
 */}}
