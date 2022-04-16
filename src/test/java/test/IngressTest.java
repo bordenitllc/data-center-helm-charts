@@ -104,7 +104,7 @@ class IngressTest {
                 .assertHasValue("SERVER_PROXY_PORT", "666")
                 .assertHasValue("SETUP_BASEURL", "https://myhost.mydomain:666");
     }
-    
+ 
     @ParameterizedTest
     @EnumSource(value = Product.class, names = {"bamboo_agent", "bitbucket"}, mode = EnumSource.Mode.EXCLUDE)
     void https_disabled(Product product) throws Exception {
