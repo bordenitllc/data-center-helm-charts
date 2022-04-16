@@ -93,19 +93,6 @@ class IngressTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Product.class, names = "bitbucket")
-    void bitbucket_ingress_host_port(Product product) throws Exception {
-        final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
-                "ingress.host", "myhost.mydomain",
-                "ingress.port", "666"));
-
-        resources.getStatefulSet(product.getHelmReleaseName()).getContainer().getEnv()
-                .assertHasValue("SERVER_PROXY_NAME", "myhost.mydomain")
-                .assertHasValue("SERVER_PROXY_PORT", "666")
-                .assertHasValue("SETUP_BASEURL", "https://myhost.mydomain:666");
-    }
-
-    @ParameterizedTest
     @EnumSource(value = Product.class, names = {"bamboo_agent", "bitbucket"}, mode = EnumSource.Mode.EXCLUDE)
     void https_disabled(Product product) throws Exception {
         final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
@@ -142,7 +129,7 @@ class IngressTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Product.class, names = "jira")
+    @EnumSource(value = Product.class, names = "jira, confluence, bamboo, bitbucket")
     void jira_ingress_host_port(Product product) throws Exception {
         final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
                 "ingress.host", "myhost.mydomain",
@@ -154,7 +141,7 @@ class IngressTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Product.class, names = "jira")
+    @EnumSource(value = Product.class, names = "jira, confluence, bitbucket")
     void jira_ingress_port(Product product) throws Exception {
         final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
                 "ingress.host", "myhost.mydomain"));
@@ -165,7 +152,7 @@ class IngressTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Product.class, names = "jira")
+    @EnumSource(value = Product.class, names = "jira, confluence, bitbucket")
     void jira_ingress_port_http(Product product) throws Exception {
         final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
                 "ingress.host", "myhost.mydomain",
@@ -252,41 +239,6 @@ class IngressTest {
 
         assertThat(ingresses.head().getNode("spec", "rules").required(0).path("http").path("paths").required(0).path("path"))
                 .hasTextEqualTo("/");
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = Product.class, names = "bamboo")
-    void bamboo_ingress_host_port(Product product) throws Exception {
-        final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
-                "ingress.host", "myhost.mydomain",
-                "ingress.port", "666"));
-
-        resources.getStatefulSet(product.getHelmReleaseName()).getContainer().getEnv()
-                .assertHasValue("ATL_PROXY_NAME", "myhost.mydomain")
-                .assertHasValue("ATL_PROXY_PORT", "666");
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = Product.class, names = "bamboo")
-    void bamboo_ingress_port(Product product) throws Exception {
-        final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
-                "ingress.host", "myhost.mydomain"));
-
-        resources.getStatefulSet(product.getHelmReleaseName()).getContainer().getEnv()
-                .assertHasValue("ATL_PROXY_NAME", "myhost.mydomain")
-                .assertHasValue("ATL_PROXY_PORT", "443");
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = Product.class, names = "bamboo")
-    void bamboo_ingress_port_http(Product product) throws Exception {
-        final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
-                "ingress.host", "myhost.mydomain",
-                "ingress.https", "False"));
-
-        resources.getStatefulSet(product.getHelmReleaseName()).getContainer().getEnv()
-                .assertHasValue("ATL_PROXY_NAME", "myhost.mydomain")
-                .assertHasValue("ATL_PROXY_PORT", "80");
     }
 
     @ParameterizedTest
