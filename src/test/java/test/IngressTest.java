@@ -91,7 +91,7 @@ class IngressTest {
                 .assertHasValue("SERVER_PROXY_PORT", "443")
                 .assertHasValue("SETUP_BASEURL", "https://myhost.mydomain");
     }
-    
+
     @ParameterizedTest
     @EnumSource(value = Product.class, names = "bitbucket")
     void bitbucket_ingress_host_port(Product product) throws Exception {
