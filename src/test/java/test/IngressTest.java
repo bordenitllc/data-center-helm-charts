@@ -93,6 +93,19 @@ class IngressTest {
     }
 
     @ParameterizedTest
+    @EnumSource(value = Product.class, names = "bitbucket")
+    void bitbucket_ingress_host_port(Product product) throws Exception {
+        final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
+                "ingress.host", "myhost.mydomain",
+                "ingress.port", "666"));
+
+        resources.getStatefulSet(product.getHelmReleaseName()).getContainer().getEnv()
+                .assertHasValue("SERVER_PROXY_NAME", "myhost.mydomain")
+                .assertHasValue("SERVER_PROXY_PORT", "666")
+                .assertHasValue("SETUP_BASEURL", "https://myhost.mydomain:666");
+    }
+
+    @ParameterizedTest
     @EnumSource(value = Product.class, names = {"bamboo_agent", "bitbucket"}, mode = EnumSource.Mode.EXCLUDE)
     void https_disabled(Product product) throws Exception {
         final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
@@ -129,7 +142,7 @@ class IngressTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Product.class, names = {"jira", "confluence"})
+    @EnumSource(value = Product.class, names = {"jira", "confluence", "bamboo"})
     void jira_ingress_host_port(Product product) throws Exception {
         final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
                 "ingress.host", "myhost.mydomain",
@@ -141,7 +154,7 @@ class IngressTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Product.class, names = {"jira", "confluence"})
+    @EnumSource(value = Product.class, names = {"jira", "confluence", "bamboo"})
     void jira_ingress_port(Product product) throws Exception {
         final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
                 "ingress.host", "myhost.mydomain"));
