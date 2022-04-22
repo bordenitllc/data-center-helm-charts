@@ -128,7 +128,7 @@ Pod labels
 
 {{- define "confluence.sysprop.synchronyServiceUrl" -}}
 {{- if .Values.synchrony.enabled -}}
--Dsynchrony.service.url={{ .Values.synchrony.ingressUrl }}/v1
+-Dsynchrony.service.url={{ .Values.ingress.host }}/synchrony/v1
 {{- else -}}
 -Dsynchrony.btf.disabled=true
 {{- end -}}
