@@ -1,0 +1,27 @@
+# This file contains overrides for the Bitbucket Helm chart's values.yaml file
+
+replicaCount: ${replica.count}
+
+database:
+  url: jdbc:postgresql://${helm.release.prefix}-bitbucket-pgsql:5432/bitbucket
+  driver: org.postgresql.Driver
+  credentials:
+    secretName: bitbucket-database-credentials
+
+bitbucket:
+  clustering:
+    enabled: ${clustering.enabled}
+  license:
+    secretName: bitbucket-license
+  sysadminCredentials:
+    secretName: bitbucket-sysadmin-credentials
+  additionalJvmArgs:
+    - -Dfeature.getting.started.page=false
+    - -XX:ActiveProcessorCount=2
+  resources:
+    container:
+      requests:
+        memory: 3G
+
+  elasticSearch:
+    baseUrl: http://${helm.release.prefix}-bitbucket-elasticsearch-master:9200

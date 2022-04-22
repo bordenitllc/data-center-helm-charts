@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  labels:
+    {{- include "common.labels.commonLabels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.crowd.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.crowd.service.type }}
+  {{- if and (eq .Values.crowd.service.type "LoadBalancer") (not (empty .Values.crowd.service.loadBalancerIP)) }}
+  loadBalancerIP: {{ .Values.crowd.service.loadBalancerIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.crowd.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.crowd.ports.hazelcast }}
+      targetPort: hazelcast
+      protocol: TCP
+      name: hazelcast
+  selector:
+    {{- include "common.labels.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,9 @@
+nav:
+    - PREREQUISITES.md
+    - INSTALLATION.md
+    - CONFIGURATION.md
+    - MIGRATION.md
+    - OPERATION.md
+    - upgrades
+    - resource_management
+    - ...

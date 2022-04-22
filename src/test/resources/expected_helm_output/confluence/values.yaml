@@ -1,0 +1,13 @@
+# This file contains chart value overrides for the Helm output unit test
+volumes:
+  sharedHome:
+    nfsPermissionFixer:
+      enabled: true
+
+synchrony:
+  enabled: true
+
+additionalHosts:
+- ip: "192.168.1.1"
+  hostnames:
+    - "test.example.com"

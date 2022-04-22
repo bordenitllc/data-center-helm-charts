@@ -1,0 +1,31 @@
+apiVersion: v2
+name: crowd
+description: A chart for installing Crowd Data Center on Kubernetes
+type: application
+version: 1.3.0
+appVersion: 4.4.1
+kubeVersion: ">=1.19.x-0"
+keywords:
+  - Crowd
+  - Crowd Server
+  - Crowd Data Center
+  - Crowd DC
+  - Atlassian
+home: https://atlassian.github.io/data-center-helm-charts/
+icon: https://atlassian.github.io/data-center-helm-charts/icons/crowd.svg
+sources:
+  - https://github.com/atlassian/data-center-helm-charts
+  - https://bitbucket.org/atlassian-docker/docker-atlassian-crowd/
+deprecated: false
+annotations:
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/changes: |
+    - kind: changed
+      description: Update Crowd version to 4.4.1
+      links:
+      - name: Github PR
+        url: https://github.com/atlassian/data-center-helm-charts/pull/396
+dependencies:
+  - name: common
+    version: 1.0.0
+    repository: https://atlassian.github.io/data-center-helm-charts

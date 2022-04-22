@@ -1,0 +1,11 @@
+collapse_single_pages: true
+nav:
+    - EXAMPLES.md
+    - Kubernetes cluster: cluster
+    - database
+    - ingress
+    - storage
+    - bamboo
+    - bitbucket
+    - logging
+    - ...

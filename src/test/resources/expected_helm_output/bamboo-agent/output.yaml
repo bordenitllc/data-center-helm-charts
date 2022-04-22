@@ -1,0 +1,94 @@
+---
+# Source: bamboo-agent/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: unittest-bamboo-agent
+  labels:
+    helm.sh/chart: bamboo-agent-1.3.0
+    app.kubernetes.io/name: bamboo-agent
+    app.kubernetes.io/instance: unittest-bamboo-agent
+    app.kubernetes.io/version: "8.1.3"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: bamboo-agent/templates/config-jvm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: unittest-bamboo-agent-jvm-config
+  labels:
+    helm.sh/chart: bamboo-agent-1.3.0
+    app.kubernetes.io/name: bamboo-agent
+    app.kubernetes.io/instance: unittest-bamboo-agent
+    app.kubernetes.io/version: "8.1.3"
+    app.kubernetes.io/managed-by: Helm
+data:
+  max_heap: 512m
+  min_heap: 256m
+---
+# Source: bamboo-agent/templates/deployment-agent.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unittest-bamboo-agent
+  labels:
+    helm.sh/chart: bamboo-agent-1.3.0
+    app.kubernetes.io/name: bamboo-agent
+    app.kubernetes.io/instance: unittest-bamboo-agent
+    app.kubernetes.io/version: "8.1.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bamboo-agent
+      app.kubernetes.io/instance: unittest-bamboo-agent
+  template:
+    metadata:
+      annotations:
+      labels:
+        app.kubernetes.io/name: bamboo-agent
+        app.kubernetes.io/instance: unittest-bamboo-agent
+    spec:
+      serviceAccountName: unittest-bamboo-agent
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        fsGroup: 2005
+      initContainers:
+      containers:
+        - name: bamboo-agent
+          image: "atlassian/bamboo-agent-base:8.1.3"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: BAMBOO_SERVER
+              value: http://bamboo.bamboo.svc.cluster.local
+            - name: WRAPPER_JAVA_INITMEMORY
+              valueFrom:
+                configMapKeyRef:
+                  key: min_heap
+                  name: unittest-bamboo-agent-jvm-config
+            - name: WRAPPER_JAVA_MAXMEMORY
+              valueFrom:
+                configMapKeyRef:
+                  key: max_heap
+                  name: unittest-bamboo-agent-jvm-config
+          startupProbe:
+            exec:
+              command: ["sh", "-c", "/probe-startup.sh"]
+            initialDelaySeconds: 1
+            periodSeconds: 1
+            failureThreshold: 120
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "/probe-readiness.sh"]
+            initialDelaySeconds: 1
+            periodSeconds: 5
+            failureThreshold: 30
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2G
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "/shutdown-wait.sh"]

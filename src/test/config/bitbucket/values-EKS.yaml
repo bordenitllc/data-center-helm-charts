@@ -1,0 +1,57 @@
+# The created service account needs to have the credentials to pull from the Atlassian docker registry
+serviceAccount:
+  imagePullSecrets:
+    - name: regcred
+
+ingress:
+  create: true
+  nginx: false
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: ${helm.release.prefix}-bitbucket.${eks.ingress.domain}
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/certificate-arn: ${eks.ingress.certificate}
+    alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=86400
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /status
+    alb.ingress.kubernetes.io/scheme: ${eks.alb.loadbalancer.scheme}
+  host: ${helm.release.prefix}-bitbucket.${eks.ingress.domain}
+
+bitbucket:
+  sshService:
+    enabled: true
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: ${helm.release.prefix}-bitbucket-ssh.${eks.ingress.domain}
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: ${eks.ssh.loadbalancer.scheme}
+  additionalEnvironmentVariables:
+    - name: PLUGIN_SSH_BASEURL
+      value: ssh://${helm.release.prefix}-bitbucket-ssh.${eks.ingress.domain}/
+
+volumes:
+  localHome:
+    persistentVolumeClaim:
+      create: true
+  sharedHome:
+    persistentVolume:
+      create: true
+      nfs:
+        path: "/srv/nfs"
+    persistentVolumeClaim:
+      create: true
+      storageClassName: ""
+      volumeName: ${helm.release.prefix}-bitbucket-shared-home-pv
+    nfsPermissionFixer:
+      enabled: true
+
+affinity:
+  podAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/instance: ${helm.release.prefix}-bitbucket-nfs # needs to be the same value as NFS server deployment
+        topologyKey: topology.kubernetes.io/zone
+
+
+nodeSelector:
+  node_purpose: ci
