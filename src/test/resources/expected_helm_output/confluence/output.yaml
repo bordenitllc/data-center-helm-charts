@@ -174,7 +174,7 @@ spec:
                 fieldRef:
                   fieldPath: status.podIP
             - name: SYNCHRONY_SERVICE_URL
-              value: https:///synchrony
+              value: "https:///synchrony"
       volumes:
         - name: entrypoint-script
           configMap:
