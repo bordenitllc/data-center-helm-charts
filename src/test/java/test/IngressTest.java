@@ -407,7 +407,7 @@ class IngressTest {
 
         org.assertj.core.api.Assertions.assertThat(ingressPaths).containsExactlyInAnyOrder(
                 "/ingress",
-                "synchrony",
+                "/synchrony",
                 "/ingress/setup",
                 "/ingress/bootstrap");
     }
