@@ -135,7 +135,7 @@ Pod labels
 {{- else -}}
 -Dsynchrony.btf.disabled=true
 {{- end -}}
-{{- end }}
+{{- end -}}
 {{- end -}}
 
 {{/*
