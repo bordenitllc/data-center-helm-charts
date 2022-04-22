@@ -152,7 +152,7 @@ class IngressTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Product.class, names = {"jira", "confluence"})
+    @EnumSource(value = Product.class, names = {"jira", "confluence", "bamboo"})
     void jira_ingress_port_http(Product product) throws Exception {
         final var resources = helm.captureKubeResourcesFromHelmChart(product, Map.of(
                 "ingress.host", "myhost.mydomain",
